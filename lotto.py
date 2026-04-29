@@ -60,7 +60,7 @@ with col2:
 # 6. 결과 출력 (Expander를 쓰되 항상 펼쳐진 상태로 고정)
 for b_idx, bundle in enumerate(st.session_state.bundles):
     # '클릭하여 열기' 문구 대신 심플하게 SET 번호만 표시
-    with st.expander(f"📍 SET {b_idx + 1}", expanded=True):
+    with st.expander(f"set {b_idx + 1}", expanded=True):
         for i, nums in enumerate(bundle):
             cols = st.columns([1, 8])
             cols[0].markdown(f"<div style='padding-top:8px; font-weight:bold;'>#{i+1}</div>", unsafe_allow_html=True)
