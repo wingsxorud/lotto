@@ -25,7 +25,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🎰 1등번호 추첨기")
+st.title("🎰 나눔로또")
 
 # 3. 로직 (통계 기반 추출)
 frequent_pool = [1, 10, 12, 13, 14, 17, 18, 21, 24, 26, 27, 33, 34, 39, 40, 43, 45]
