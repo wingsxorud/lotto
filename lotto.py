@@ -15,7 +15,7 @@ st.markdown("""
     
     /* 버튼 사이 간격 좁히기 (핵심!) */
     div[data-testid="stHorizontalBlock"] {
-        gap: 10px !important;
+        gap: 2px !important;
     }
     
     .stButton>button { 
