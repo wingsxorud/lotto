@@ -25,10 +25,6 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-/* CSS 영역에 이 내용을 추가하거나 수정하세요 */
-div[data-testid="stHorizontalBlock"] {
-    gap: 10px !important;  /* 숫자가 작을수록 버튼이 서로 붙습니다 */
-}
 
 st.title("🎰 나눔로또")
 
