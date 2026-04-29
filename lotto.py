@@ -2,7 +2,7 @@ import streamlit as st
 import random
 
 # 1. 페이지 설정
-st.set_page_config(page_title="행님 로또 명당", page_icon="🎰", layout="centered")
+st.set_page_config(page_title="1등 번호 추첨기", page_icon="🎰", layout="centered")
 
 # 2. 디자인 설정 (공 모양 및 간격 최적화)
 st.markdown("""
@@ -25,7 +25,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🎰 행님 로또 명당")
+st.title("🎰 1등번호 추첨기")
 
 # 3. 로직 (통계 기반 추출)
 frequent_pool = [1, 10, 12, 13, 14, 17, 18, 21, 24, 26, 27, 33, 34, 39, 40, 43, 45]
