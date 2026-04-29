@@ -1,38 +1,21 @@
 import streamlit as st
 import random
 
-# 1. 페이지 설정 및 초기화
+# 1. 페이지 설정
 st.set_page_config(page_title="행님 로또 명당", page_icon="🎰", layout="centered")
 
-# 2. 아주 단순하고 강력한 공 디자인 (스타일 태그 최소화)
+# 2. 최소한의 안전한 디자인 (공 색깔 및 간격)
 st.markdown("""
     <style>
-    /* 전체 화면 여백 최적화 */
-    .main .block-container {
-        padding: 1.5rem 0.5rem !important;
-        max-width: 450px !important;
-    }
-    /* 버튼 간격 및 디자인 */
-    div[data-testid="stHorizontalBlock"] {
-        gap: 10px !important;
-    }
-    .stButton>button {
-        width: 100%;
-        border-radius: 12px;
-        height: 3.5rem;
-        font-weight: bold !important;
-    }
-    /* 로또 공 - 큼직하게 고정 */
-    .ball {
+    .main .block-container { padding: 1rem 0.5rem !important; max-width: 500px !important; }
+    .stButton>button { width: 100%; border-radius: 12px; height: 3.5rem; font-weight: bold !important; }
+    
+    /* 공 모양만 HTML로 안전하게 구현 */
+    .ball-style {
         display: inline-block;
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
-        border-radius: 50%;
-        text-align: center;
-        color: white !important;
-        font-weight: bold;
-        font-size: 15px;
+        width: 38px; height: 38px; line-height: 38px;
+        border-radius: 50%; text-align: center;
+        color: white !important; font-weight: bold; font-size: 15px;
         margin: 2px;
         box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
     }
@@ -42,13 +25,15 @@ st.markdown("""
 st.title("🎰 행님 로또 명당")
 
 # 3. 로직 (통계 기반 추출)
-frequent = [1, 10, 12, 13, 14, 17, 18, 21, 24, 26, 27, 33, 34, 39, 40, 43, 45]
-def pick_lotto():
-    h = random.sample(frequent, 3)
-    others = [n for n in range(1, 46) if n not in h]
-    return sorted(h + random.sample(others, 3))
+frequent_pool = [1, 10, 12, 13, 14, 17, 18, 21, 24, 26, 27, 33, 34, 39, 40, 43, 45]
 
-def get_c(n):
+def generate_lotto():
+    high_part = random.sample(frequent_pool, 3)
+    others = [n for n in range(1, 46) if n not in high_part]
+    low_part = random.sample(others, 3)
+    return sorted(high_part + low_part)
+
+def get_color(n):
     if n <= 10: return "#fbc400"
     if n <= 20: return "#69c8f2"
     if n <= 30: return "#ff7272"
@@ -57,32 +42,32 @@ def get_c(n):
 
 # 4. 세션 관리
 if 'bundles' not in st.session_state:
-    st.session_state.bundles = [[pick_lotto() for _ in range(5)]]
+    st.session_state.bundles = [[generate_lotto() for _ in range(5)]]
 
-# 5. 상단 버튼 (1:1 비율)
-c1, c2 = st.columns(2)
-with c1:
-    if st.button("🔄 번호 새로고침"):
-        st.session_state.bundles = [[pick_lotto() for _ in range(5)]]
+# 5. 조작 버튼
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("🔄 새로고침"):
+        st.session_state.bundles = [[generate_lotto() for _ in range(5)]]
         st.rerun()
-with c2:
+with col2:
     if st.button("➕ 5세트 추가"):
-        st.session_state.bundles.append([pick_lotto() for _ in range(5)])
+        st.session_state.bundles.append([generate_lotto() for _ in range(5)])
 
-# 6. 결과 출력 (가장 안정적인 columns 방식)
+# 6. 결과 출력 (Streamlit 표준 위젯 사용으로 코드 노출 방지)
 for b_idx, bundle in enumerate(st.session_state.bundles):
-    # Streamlit 공식 테두리 상자 사용 (절대 안 깨짐)
-    with st.container(border=True):
-        st.caption(f"SET {b_idx + 1}")
+    with st.expander(f"📍 SET {b_idx + 1} (클릭하여 열기)", expanded=True):
         for i, nums in enumerate(bundle):
-            # 라벨과 공을 1:9 비율로 배치
-            row_cols = st.columns([1, 9])
-            with row_cols[0]:
-                st.markdown(f"<div style='padding-top:10px; color:#ccc; font-weight:bold;'>#{i+1}</div>", unsafe_allow_html=True)
-            with row_cols[1]:
-                # 공 6개를 안전하게 한 줄로 출력
-                balls_html = "".join([f'<div class="ball" style="background-color:{get_c(n)}">{n}</div>' for n in nums])
-                st.markdown(balls_html, unsafe_allow_html=True)
+            # 번호 라벨과 공을 컬럼으로 분리
+            cols = st.columns([1, 8])
+            cols[0].markdown(f"**#{i+1}**")
+            
+            # 공 6개를 하나의 HTML 문자열로 렌더링
+            balls_html = "".join([
+                f'<span class="ball-style" style="background-color:{get_color(n)}">{n}</span>' 
+                for n in nums
+            ])
+            cols[1].markdown(balls_html, unsafe_allow_html=True)
 
 st.divider()
-st.info("행님, 이번 코드는 Streamlit의 정석대로 짰습니다. 이제는 진짜 반영될 겁니다!")
+st.info("행님, 이제 코드가 튀어나오는 일 없이 깔끔하게 나올 겁니다! 꼭 1등 되셔요! 🚀")
