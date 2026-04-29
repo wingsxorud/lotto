@@ -7,10 +7,10 @@ st.set_page_config(page_title="1등 번호 추첨기", page_icon="🎰", layout=
 # 2. 디자인 설정 (프레임 축소 및 버튼 간격 밀착)
 st.markdown("""
     <style>
-    /* 전체 프레임 폭 조절 (400px로 컴팩트하게) */
+    /* 전체 프레임 폭 조절 (200px로 컴팩트하게) */
     .main .block-container { 
         padding: 1.5rem 0.5rem !important; 
-        max-width: 400px !important; 
+        max-width: 200px !important; 
     }
     
     /* 버튼 사이 간격 좁히기 (핵심!) */
@@ -19,7 +19,7 @@ st.markdown("""
     }
     
     .stButton>button { 
-        width: 50%; 
+        width: 100%; 
         border-radius: 12px; 
         height: 3.5rem; 
         font-weight: bold !important; 
