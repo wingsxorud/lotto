@@ -4,11 +4,26 @@ import random
 # 1. 페이지 설정
 st.set_page_config(page_title="1등 번호 추첨기", page_icon="🎰", layout="centered")
 
-# 2. 디자인 설정 (공 모양 및 간격 최적화)
+# 2. 디자인 설정 (프레임 축소 및 버튼 간격 밀착)
 st.markdown("""
     <style>
-    .main .block-container { padding: 1.5rem 0.5rem !important; max-width: 400px !important; }
-    .stButton>button { width: 100%; border-radius: 12px; height: 3.5rem; font-weight: bold !important; }
+    /* 전체 프레임 폭 조절 (400px로 컴팩트하게) */
+    .main .block-container { 
+        padding: 1.5rem 0.5rem !important; 
+        max-width: 400px !important; 
+    }
+    
+    /* 버튼 사이 간격 좁히기 (핵심!) */
+    div[data-testid="stHorizontalBlock"] {
+        gap: 10px !important;
+    }
+    
+    .stButton>button { 
+        width: 100%; 
+        border-radius: 12px; 
+        height: 3.5rem; 
+        font-weight: bold !important; 
+    }
     
     /* 로또 공 디자인 */
     .ball-style {
@@ -58,13 +73,13 @@ with col2:
     if st.button("➕ 5세트 추가"):
         st.session_state.bundles.append([generate_lotto() for _ in range(5)])
 
-# 6. 결과 출력 (Expander를 쓰되 항상 펼쳐진 상태로 고정)
+# 6. 결과 출력
 for b_idx, bundle in enumerate(st.session_state.bundles):
-    # '클릭하여 열기' 문구 대신 심플하게 SET 번호만 표시
     with st.expander(f"set {b_idx + 1}", expanded=True):
         for i, nums in enumerate(bundle):
-            cols = st.columns([1, 8])
-            cols[0].markdown(f"<div style='padding-top:8px; font-weight:bold;'>#{i+1}</div>", unsafe_allow_html=True)
+            # 번호 라벨 비율을 살짝 줄여서 공간 확보
+            cols = st.columns([0.15, 0.85])
+            cols[0].markdown(f"<div style='padding-top:10px; font-weight:bold; color:#ccc;'>#{i+1}</div>", unsafe_allow_html=True)
             
             balls_html = "".join([
                 f'<span class="ball-style" style="background-color:{get_color(n)}">{n}</span>' 
@@ -73,4 +88,4 @@ for b_idx, bundle in enumerate(st.session_state.bundles):
             cols[1].markdown(balls_html, unsafe_allow_html=True)
 
 st.divider()
-
+st.info("행님, 이제 버튼도 딲! 붙어 있고 프레임도 아주 깔끔합니다! 🚀")
