@@ -7,7 +7,7 @@ st.set_page_config(page_title="1등 번호 추첨기", page_icon="🎰", layout=
 # 2. 디자인 설정 (공 모양 및 간격 최적화)
 st.markdown("""
     <style>
-    .main .block-container { padding: 1.5rem 0.5rem !important; max-width: 500px !important; }
+    .main .block-container { padding: 1.5rem 0.5rem !important; max-width: 400px !important; }
     .stButton>button { width: 100%; border-radius: 12px; height: 3.5rem; font-weight: bold !important; }
     
     /* 로또 공 디자인 */
