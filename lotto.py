@@ -41,7 +41,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 
-st.title("🎰 동행복권<br />로또 6/45")
+st.title("🎰 Lotto 6/45")
 
 # 3. 로직 (통계 기반 추출)
 frequent_pool = [1, 10, 12, 13, 14, 17, 18, 21, 24, 26, 27, 33, 34, 39, 40, 43, 45]
