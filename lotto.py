@@ -4,59 +4,66 @@ import random
 # 페이지 설정
 st.set_page_config(page_title="행님 로또 명당", page_icon="🎰", layout="centered")
 
-# 간격 최적화 커스텀 CSS
+# 간격 극최소화 및 세트 박스 디자인
 st.markdown("""
     <style>
-    /* 전체 배경 및 패딩 조절 */
     .block-container {
-        padding-top: 2rem !important;
+        padding-top: 1.5rem !important;
         padding-bottom: 1rem !important;
+        max-width: 450px;
     }
-    /* 버튼 스타일 및 간격 */
     .stButton>button {
         width: 100%;
-        height: 2.8em;
+        height: 3em;
         font-weight: bold !important;
-        border-radius: 8px;
-        margin-bottom: 5px;
-    }
-    /* 조합 간격 최소화 */
-    .lotto-row {
-        margin-bottom: 2px !important;
-        padding: 5px 0;
-    }
-    .lotto-container {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin: 0 auto 8px auto;
-        padding: 5px;
-        background-color: #f1f3f5;
         border-radius: 10px;
     }
+    /* 5개 조합을 묶는 세트 박스 */
+    .lotto-bundle {
+        background-color: #ffffff;
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        padding: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    /* 조합 한 줄 레이아웃 */
+    .lotto-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+    .lotto-row:last-child { border-bottom: none; }
+    
+    .lotto-label {
+        font-size: 0.8rem;
+        font-weight: bold;
+        color: #666;
+        width: 45px;
+    }
+    .ball-container {
+        display: flex;
+        gap: 4px;
+    }
     .lotto-ball {
-        width: 32px;
-        height: 32px;
-        line-height: 32px;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
         border-radius: 50%;
         text-align: center;
         color: white;
         font-weight: bold;
-        font-size: 14px;
-        margin: 3px;
-        box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-    }
-    /* 조합 텍스트 간격 줄이기 */
-    .stMarkdown p {
-        margin-bottom: 2px !important;
-        font-size: 0.9rem;
+        font-size: 13px;
+        box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
     }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("🎰 행님 전용 모바일 명당")
+st.title("🎰 행님 로또 명당")
 
-# 데이터 시뮬레이션
+# 데이터 로직
 frequent_numbers = [1, 10, 12, 13, 14, 17, 18, 21, 24, 26, 27, 33, 34, 39, 40, 43, 45]
 
 def get_lotto_numbers():
@@ -72,31 +79,37 @@ def get_ball_color(num):
     if 31 <= num <= 40: return "#aaaaaa"
     return "#b0d840"
 
-if 'lotto_sets' not in st.session_state:
-    st.session_state.lotto_sets = [get_lotto_numbers() for _ in range(5)]
+# 세션 상태 관리 (세트 단위로 저장)
+if 'lotto_bundles' not in st.session_state:
+    st.session_state.lotto_bundles = [[get_lotto_numbers() for _ in range(5)]]
 
 col1, col2 = st.columns(2)
 with col1:
-    if st.button("🔄 새로고침"):
-        st.session_state.lotto_sets = [get_lotto_numbers() for _ in range(5)]
+    if st.button("🔄 전체 새로고침"):
+        st.session_state.lotto_bundles = [[get_lotto_numbers() for _ in range(5)]]
         st.rerun()
 with col2:
-    if st.button("➕ 5세트 추가"):
-        st.session_state.lotto_sets.extend([get_lotto_numbers() for _ in range(5)])
+    if st.button("➕ 5조합 세트 추가"):
+        st.session_state.lotto_bundles.append([get_lotto_numbers() for _ in range(5)])
 
-# 로또 번호 출력 (간격 축소 버전)
-for i, nums in enumerate(st.session_state.lotto_sets):
-    balls_html = "".join([
-        f'<div class="lotto-ball" style="background-color:{get_ball_color(n)}">{n}</div>' 
-        for n in nums
-    ])
-    # 조합 이름과 공 사이의 간격을 최소화하기 위해 하나의 div로 묶음
-    st.markdown(f'''
-        <div class="lotto-row">
-            <div style="font-weight:bold; margin-left:10px;">조합 {i+1}</div>
-            <div class="lotto-container">{balls_html}</div>
-        </div>
-    ''', unsafe_allow_html=True)
+# 로또 번호 출력 (세트 단위 묶음)
+for b_idx, bundle in enumerate(st.session_state.lotto_bundles):
+    bundle_html = f'<div class="lotto-bundle">'
+    bundle_html += f'<div style="font-size:0.7rem; color:#999; margin-bottom:5px;">SET {b_idx + 1}</div>'
+    
+    for i, nums in enumerate(bundle):
+        balls_html = "".join([
+            f'<div class="lotto-ball" style="background-color:{get_ball_color(n)}">{n}</div>' 
+            for n in nums
+        ])
+        bundle_html += f'''
+            <div class="lotto-row">
+                <div class="lotto-label">#{i+1}</div>
+                <div class="ball-container">{balls_html}</div>
+            </div>
+        '''
+    bundle_html += '</div>'
+    st.markdown(bundle_html, unsafe_allow_html=True)
 
 st.divider()
-st.caption("화면을 캡처해서 사용하세요! 행님 대박 기원!")
+st.caption("행님, 이 세트 그대로 캡처해서 로또방 가시면 됩니다! 대박 나십쇼!")
