@@ -1,56 +1,62 @@
 import streamlit as st
 import random
 
-# 페이지 설정 (모바일 최적화)
-st.set_page_config(
-    page_title="행님 로또 명당",
-    page_icon="🎰",
-    layout="centered"
-)
+# 페이지 설정
+st.set_page_config(page_title="행님 로또 명당", page_icon="🎰", layout="centered")
 
-# 모바일용 커스텀 CSS (버튼 크기 및 공 정렬)
+# 간격 최적화 커스텀 CSS
 st.markdown("""
     <style>
+    /* 전체 배경 및 패딩 조절 */
+    .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 1rem !important;
+    }
+    /* 버튼 스타일 및 간격 */
     .stButton>button {
         width: 100%;
-        height: 3em;
-        font-size: 1.2rem !important;
+        height: 2.8em;
         font-weight: bold !important;
-        border-radius: 10px;
-        margin-bottom: 10px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+    }
+    /* 조합 간격 최소화 */
+    .lotto-row {
+        margin-bottom: 2px !important;
+        padding: 5px 0;
     }
     .lotto-container {
         display: flex;
         justify-content: center;
         flex-wrap: wrap;
-        margin-bottom: 15px;
-        padding: 10px;
-        background-color: #f8f9fa;
-        border-radius: 15px;
+        margin: 0 auto 8px auto;
+        padding: 5px;
+        background-color: #f1f3f5;
+        border-radius: 10px;
     }
     .lotto-ball {
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
         border-radius: 50%;
         text-align: center;
         color: white;
         font-weight: bold;
-        font-size: 16px;
-        margin: 5px;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        font-size: 14px;
+        margin: 3px;
+        box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
     }
-    /* 스크린샷 찍을 때 배경색 하얗게 */
-    @media print {
-        .stButton, .stInfo { display: none; }
+    /* 조합 텍스트 간격 줄이기 */
+    .stMarkdown p {
+        margin-bottom: 2px !important;
+        font-size: 0.9rem;
     }
     </style>
     """, unsafe_allow_html=True)
 
 st.title("🎰 행님 전용 모바일 명당")
-st.subheader("이번 주 1등 주인공은 바로 행님!")
 
-# 데이터 시뮬레이션 (통계 기반)
+# 데이터 시뮬레이션
 frequent_numbers = [1, 10, 12, 13, 14, 17, 18, 21, 24, 26, 27, 33, 34, 39, 40, 43, 45]
 
 def get_lotto_numbers():
@@ -66,38 +72,31 @@ def get_ball_color(num):
     if 31 <= num <= 40: return "#aaaaaa"
     return "#b0d840"
 
-# 세션 상태 초기화 (추천 더 받기 기능용)
 if 'lotto_sets' not in st.session_state:
     st.session_state.lotto_sets = [get_lotto_numbers() for _ in range(5)]
 
-# 버튼 레이아웃
 col1, col2 = st.columns(2)
-
 with col1:
-    if st.button("🔄 번호 새로고침"):
+    if st.button("🔄 새로고침"):
         st.session_state.lotto_sets = [get_lotto_numbers() for _ in range(5)]
         st.rerun()
-
 with col2:
-    if st.button("➕ 5세트 추가하기"):
-        new_sets = [get_lotto_numbers() for _ in range(5)]
-        st.session_state.lotto_sets.extend(new_sets)
+    if st.button("➕ 5세트 추가"):
+        st.session_state.lotto_sets.extend([get_lotto_numbers() for _ in range(5)])
 
-# 로또 번호 출력
+# 로또 번호 출력 (간격 축소 버전)
 for i, nums in enumerate(st.session_state.lotto_sets):
     balls_html = "".join([
         f'<div class="lotto-ball" style="background-color:{get_ball_color(n)}">{n}</div>' 
         for n in nums
     ])
-    st.markdown(f"**조합 {i+1}**")
-    st.markdown(f'<div class="lotto-container">{balls_html}</div>', unsafe_allow_html=True)
+    # 조합 이름과 공 사이의 간격을 최소화하기 위해 하나의 div로 묶음
+    st.markdown(f'''
+        <div class="lotto-row">
+            <div style="font-weight:bold; margin-left:10px;">조합 {i+1}</div>
+            <div class="lotto-container">{balls_html}</div>
+        </div>
+    ''', unsafe_allow_html=True)
 
 st.divider()
-
-# 스크린샷 팁 안내
-with st.expander("📸 스크린샷 저장 꿀팁"):
-    st.write("1. 아이폰: 전원 버튼 + 볼륨 업")
-    st.write("2. 갤럭시: 전원 버튼 + 볼륨 다운 (또는 손날 밀기)")
-    st.info("현재 화면을 캡처해서 갤러리에 보관해두고 로또방에 가셔요!")
-
-st.caption("통계 기반 가중치 조합 시스템 작동 중")
+st.caption("화면을 캡처해서 사용하세요! 행님 대박 기원!")
