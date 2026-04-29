@@ -4,31 +4,22 @@ import random
 # 1. 페이지 설정
 st.set_page_config(page_title="행님 로또 명당", page_icon="🎰", layout="centered")
 
-# 2. 스타일 설정 (공 디자인 및 간격 최적화)
+# 2. 스타일 설정 (공 디자인 및 카드 프레임)
 st.markdown("""
     <style>
-    .main .block-container { padding: 1rem 0.5rem !important; max-width: 500px !important; }
+    .main .block-container { padding: 1.5rem 0.5rem !important; max-width: 500px !important; }
     .stButton>button { width: 100%; border-radius: 12px; height: 3.5rem; font-weight: bold !important; }
     
-    /* 세트 박스 디자인 */
-    .set-container {
-        border: 1px solid #eee;
+    /* 카드 프레임 스타일 */
+    .lotto-card {
+        border: 1px solid #e0e0e0;
         border-radius: 15px;
-        padding: 15px 10px;
+        padding: 20px 10px;
         margin-bottom: 20px;
-        background-color: white;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        background-color: #ffffff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
     
-    /* 세트 제목 스타일 */
-    .set-title {
-        font-size: 0.85rem;
-        font-weight: bold;
-        color: #bbb;
-        margin-bottom: 10px;
-        padding-left: 5px;
-    }
-
     /* 로또 공 디자인 */
     .ball-style {
         display: inline-block;
@@ -39,12 +30,13 @@ st.markdown("""
         box-shadow: inset -2px -2px 4px rgba(0,0,0,0.15);
     }
 
-    /* 번호 라벨 스타일 */
-    .row-label {
-        font-size: 0.9rem;
+    /* 세트 제목 */
+    .set-header {
+        font-size: 0.8rem;
         font-weight: bold;
-        color: #ccc;
-        margin-right: 10px;
+        color: #bbb;
+        margin-bottom: 15px;
+        padding-left: 5px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -81,17 +73,17 @@ with col2:
     if st.button("➕ 5세트 추가"):
         st.session_state.bundles.append([generate_lotto() for _ in range(5)])
 
-# 6. 결과 출력 (Expander 제거 버전)
+# 6. 결과 출력 (프레임 내부에 확실히 가두기)
 for b_idx, bundle in enumerate(st.session_state.bundles):
-    # 카드 전체를 감싸는 컨테이너 시작
-    st.markdown(f'<div class="set-container">', unsafe_allow_html=True)
-    st.markdown(f'<div class="set-title">SET {b_idx + 1}</div>', unsafe_allow_html=True)
+    # div 태그를 직접 열고 닫아 프레임을 형성
+    st.markdown(f'<div class="lotto-card">', unsafe_allow_html=True)
+    st.markdown(f'<div class="set-header">SET {b_idx + 1}</div>', unsafe_allow_html=True)
     
     for i, nums in enumerate(bundle):
-        # 번호 라벨과 공을 컬럼으로 분리 (라벨은 작게, 공은 넓게)
+        # 한 줄씩 가로로 배치 (번호 라벨 1 : 공들 8)
         c_idx, c_balls = st.columns([1, 8])
         with c_idx:
-            st.markdown(f"<div style='padding-top:10px;' class='row-label'>#{i+1}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='padding-top:8px; color:#ddd; font-weight:bold; font-size:13px;'>#{i+1}</div>", unsafe_allow_html=True)
         with c_balls:
             balls_html = "".join([
                 f'<span class="ball-style" style="background-color:{get_color(n)}">{n}</span>' 
@@ -99,7 +91,7 @@ for b_idx, bundle in enumerate(st.session_state.bundles):
             ])
             st.markdown(balls_html, unsafe_allow_html=True)
             
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True) # 프레임 확실히 닫기
 
 st.divider()
-st.info("행님, 이제 거슬리는 거 없이 깔끔하게 나옵니다. 이번 주 대박 번호는 이 안에 있습니다! 🚀")
+st.info("행님, 이제 프레임 안으로 공들이 쏙 들어갔습니다! 확인 한번 부탁드려요! 🚀")
