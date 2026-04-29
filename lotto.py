@@ -4,66 +4,67 @@ import random
 # 페이지 설정
 st.set_page_config(page_title="행님 로또 명당", page_icon="🎰", layout="centered")
 
-# 간격 극최소화 및 세트 박스 디자인
+# 간격 극최소화 및 모바일 최적화 CSS
 st.markdown("""
     <style>
+    /* 화면 좌우 여백 최적화 */
     .block-container {
-        padding-top: 1.5rem !important;
-        padding-bottom: 1rem !important;
+        padding: 1rem 0.5rem !important;
         max-width: 450px;
     }
     .stButton>button {
         width: 100%;
-        height: 3em;
+        height: 3.2em;
         font-weight: bold !important;
-        border-radius: 10px;
+        border-radius: 12px;
     }
-    /* 5개 조합을 묶는 세트 박스 */
+    /* 세트 묶음 박스 */
     .lotto-bundle {
         background-color: #ffffff;
-        border: 2px solid #e9ecef;
+        border: 1px solid #dee2e6;
         border-radius: 15px;
-        padding: 10px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        padding: 12px 8px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-    /* 조합 한 줄 레이아웃 */
+    /* 각 번호 줄 간격 밀착 */
     .lotto-row {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 4px 0;
+        padding: 5px 0;
         border-bottom: 1px solid #f8f9fa;
     }
     .lotto-row:last-child { border-bottom: none; }
     
     .lotto-label {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: bold;
-        color: #666;
-        width: 45px;
+        color: #adb5bd;
+        width: 35px;
+        text-align: center;
     }
     .ball-container {
         display: flex;
-        gap: 4px;
+        gap: 5px;
+        margin-left: 5px;
     }
     .lotto-ball {
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
         border-radius: 50%;
         text-align: center;
         color: white;
         font-weight: bold;
-        font-size: 13px;
-        box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
+        font-size: 14px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
     }
     </style>
     """, unsafe_allow_html=True)
 
 st.title("🎰 행님 로또 명당")
 
-# 데이터 로직
+# 로직 (최다 빈도수 가중치)
 frequent_numbers = [1, 10, 12, 13, 14, 17, 18, 21, 24, 26, 27, 33, 34, 39, 40, 43, 45]
 
 def get_lotto_numbers():
@@ -79,7 +80,7 @@ def get_ball_color(num):
     if 31 <= num <= 40: return "#aaaaaa"
     return "#b0d840"
 
-# 세션 상태 관리 (세트 단위로 저장)
+# 세션 상태 관리
 if 'lotto_bundles' not in st.session_state:
     st.session_state.lotto_bundles = [[get_lotto_numbers() for _ in range(5)]]
 
@@ -92,24 +93,27 @@ with col2:
     if st.button("➕ 5조합 세트 추가"):
         st.session_state.lotto_bundles.append([get_lotto_numbers() for _ in range(5)])
 
-# 로또 번호 출력 (세트 단위 묶음)
+# 로또 번호 출력
 for b_idx, bundle in enumerate(st.session_state.lotto_bundles):
-    bundle_html = f'<div class="lotto-bundle">'
-    bundle_html += f'<div style="font-size:0.7rem; color:#999; margin-bottom:5px;">SET {b_idx + 1}</div>'
+    # 각 세트 시작
+    html_out = f'<div class="lotto-bundle">'
+    html_out += f'<div style="font-size:0.7rem; color:#ced4da; margin-bottom:5px; font-weight:bold;">SET {b_idx + 1}</div>'
     
     for i, nums in enumerate(bundle):
         balls_html = "".join([
             f'<div class="lotto-ball" style="background-color:{get_ball_color(n)}">{n}</div>' 
             for n in nums
         ])
-        bundle_html += f'''
+        # 한 줄씩 추가
+        html_out += f'''
             <div class="lotto-row">
                 <div class="lotto-label">#{i+1}</div>
                 <div class="ball-container">{balls_html}</div>
             </div>
         '''
-    bundle_html += '</div>'
-    st.markdown(bundle_html, unsafe_allow_html=True)
+    
+    html_out += '</div>' # 세트 닫기
+    st.markdown(html_out, unsafe_allow_html=True)
 
 st.divider()
-st.caption("행님, 이 세트 그대로 캡처해서 로또방 가시면 됩니다! 대박 나십쇼!")
+st.caption("캡처 후 갤러리에 저장해서 사용하세요. 행님 대박 기원!")
