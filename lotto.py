@@ -72,4 +72,4 @@ for b_idx, bundle in enumerate(st.session_state.bundles):
             cols[1].markdown(balls_html, unsafe_allow_html=True)
 
 st.divider()
-st.info("행님, 이제 속 썩이는 일 없이 아주 잘 돌아갈 겁니다. 이번 주 1등은 행님 겁니다! 🚀")
+
